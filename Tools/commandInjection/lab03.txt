@@ -1,0 +1,16 @@
+Lab 03 : Blind Command injection with Output redirect
+
+Target : Perform the Blind Command injection and redirect the ouput somewhere in the website so we can see the Output
+
+Analysis :
+
+(1)Confirm Blind Command Injection with sleep commands
+
+### & sleep 10 #
+
+(2)check where images are stored and Then save the command output as a file in that directory
+
+### & whoami >www/var/images/output.txt
+
+(3)change the parameter in request and replace with the output.txt 
+

