@@ -280,8 +280,3 @@ Do not test on systems without **proper authorization**.
 
 ---
 
-If you want next level upgrade, I can:
-
-* 🔥 Create a **mega wordlist (Traversal + Command Injection combined)**
-* ⚙️ Build a **custom Python auto-fuzzer**
-* 🎯 Make a **1-page printable cheat sheet for CTF**

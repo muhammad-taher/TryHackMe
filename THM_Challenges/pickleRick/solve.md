@@ -269,8 +269,4 @@ Cybersecurity Enthusiast | CTF Player
 
 ---
 
-If you want, I can also:
 
-* 🔥 Add badges (TryHackMe, difficulty, status)
-* 🎨 Make it more aesthetic (icons, shields.io)
-* 📂 Convert into a full CTF portfolio repo structure

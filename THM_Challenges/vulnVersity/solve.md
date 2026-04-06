@@ -244,9 +244,3 @@ cat root.txt
 Cyber Security Enthusiast | CTF Player
 
 ---
-
-If you want, I can also:
-
-* Add **badges (TryHackMe, difficulty, status)**
-* Make a **dark-themed README with shields.io**
-* Or convert this into a **portfolio-style write-up** 🔥

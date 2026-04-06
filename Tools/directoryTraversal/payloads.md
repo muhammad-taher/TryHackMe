@@ -292,9 +292,3 @@ Combine these payloads with tools like:
 * Context-based testing
 
 ---
-
-If you want, I can also:
-
-* 🔥 Turn this into a **GitHub-ready repo**
-* ⚙️ Add **automated fuzzing scripts (Python/ffuf wordlist)**
-* 🎯 Make a **CTF cheat sheet version (1-page)**

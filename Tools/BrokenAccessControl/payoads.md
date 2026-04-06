@@ -272,4 +272,3 @@ This guide is for **educational and authorized security testing purposes only**.
 
 ---
 
-⭐ If you find this useful, consider giving the repo a star!

@@ -251,12 +251,3 @@ Cybersecurity Enthusiast | CTF Player
 > **LFI → RCE → Reverse Shell → PrivEsc → Docker Escape**
 
 ---
-
-If you want next level:
-
-* 🔥 Add **badges (TryHackMe, difficulty, OS)**
-* 🎨 Add **screenshots section**
-* 📁 Make a **full CTF portfolio repo (multi-room)**
-* 🧾 Convert all your writeups into a **professional pentest portfolio**
-
-Just tell me 👍

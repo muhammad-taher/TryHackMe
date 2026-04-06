@@ -301,10 +301,3 @@ cat root.txt
 Cyber Security Enthusiast | CTF Player
 
 ---
-
-If you want next level upgrade 🔥
-I can:
-
-* Combine **all your THM write-ups into one pro repo**
-* Add **diagrams (attack flow)**
-* Create a **portfolio-ready README with screenshots & badges**
